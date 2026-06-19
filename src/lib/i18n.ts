@@ -65,7 +65,7 @@ export const translations = {
     // Reto 4 - Mensaje Pirata
     challenge4Title: 'El Mensaje del Pirata',
     challenge4Intro: 'El pirata dejó un mensaje con monedas. ¡Resuelve el misterio!',
-    challenge4Question: 'El pirata tenía 50 monedas. Gastó 18 comprando muchas provisiones. ¿Cuántas le quedaron?',
+    challenge4Question: 'Ayuda al pirata a organizar sus cuentas.',
     challenge4Options: ['32', '28', '38'],
     challenge4Correct: '32',
     challenge4Skill: 'Reflexión y Análisis',
@@ -180,7 +180,7 @@ export const translations = {
 
     challenge4Title: "The Pirate's Message",
     challenge4Intro: 'The pirate left a message with coins. Solve the mystery!',
-    challenge4Question: 'The pirate had 50 coins. He spent 18 buying supplies. How many did he have left?',
+    challenge4Question: 'Help the pirate organise his tender',
     challenge4Options: ['32', '28', '38'],
     challenge4Correct: '32',
     challenge4Skill: 'Reflection and Analysis',
