@@ -235,5 +235,9 @@ export const translations = {
 export type TranslationKey = keyof typeof translations.es
 
 export function getTranslation(lang: 'es' | 'en', key: TranslationKey): string {
-  return translations[lang][key] || key
+  const value = translations[lang][key]
+  if (Array.isArray(value)) {
+    return value as unknown as string
+  }
+  return (value as string) || (key as string)
 }
