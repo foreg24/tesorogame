@@ -148,13 +148,14 @@ export function WorldScreen({ gameState, onNavigate, onBack, onUpdatePosition }:
 
       if (key === 'enter' && nearChallenge) {
         e.preventDefault()
+        const lang = gameState.language
         if (nearChallenge.requiresAllKeys && gameState.keys.length < 4) {
           setDialogueName('🔒')
-          setDialogueText(gameState.language === 'es' ? 'Necesitas las 4 llaves para entrar.' : 'You need all 4 keys to enter.')
+          setDialogueText(lang === 'es' ? 'Necesitas las 4 llaves para entrar.' : 'You need all 4 keys to enter.')
           setShowDialogue(true)
         } else if (nearChallenge.id <= 4 && gameState.completedChallenges.includes(nearChallenge.id)) {
           setDialogueName('✅')
-          setDialogueText(gameState.language === 'es' ? 'Ya completaste este desafío. ¡Sigue adelante!' : 'You already completed this challenge. Keep going!')
+          setDialogueText(lang === 'es' ? 'Ya completaste este desafío. ¡Sigue adelante!' : 'You already completed this challenge. Keep going!')
           setShowDialogue(true)
         } else {
           savePosition()
@@ -176,19 +177,23 @@ export function WorldScreen({ gameState, onNavigate, onBack, onUpdatePosition }:
   }, [nearChallenge, gameState.keys.length, gameState.completedChallenges, onNavigate, savePosition])
 
   useEffect(() => {
-    let foundNPC: NPCData | null = null
-    npcs.forEach(npc => {
-      const dist = Math.sqrt(Math.pow(playerX - npc.x, 2) + Math.pow(playerY - npc.y, 2))
-      if (dist < 7) {
-        foundNPC = npc
-      }
-    })
+    // Find nearest NPC
+    let nearestNPC: NPCData | null = null
+    let minNPCDist = Infinity
 
-    if (foundNPC) {
-      if (activeNPC !== foundNPC.id) {
-        setActiveNPC(foundNPC.id)
-        setDialogueName(foundNPC.name)
-        setDialogueText(foundNPC.dialogue)
+    for (const npc of npcs) {
+      const dist = Math.sqrt(Math.pow(playerX - npc.x, 2) + Math.pow(playerY - npc.y, 2))
+      if (dist < 7 && dist < minNPCDist) {
+        minNPCDist = dist
+        nearestNPC = npc
+      }
+    }
+
+    if (nearestNPC) {
+      if (activeNPC !== nearestNPC.id) {
+        setActiveNPC(nearestNPC.id)
+        setDialogueName(nearestNPC.name)
+        setDialogueText(nearestNPC.dialogue)
         setShowDialogue(true)
       }
     } else {
@@ -196,17 +201,21 @@ export function WorldScreen({ gameState, onNavigate, onBack, onUpdatePosition }:
       setShowDialogue(false)
     }
 
-    let foundChallenge: ChallengeLoc | null = null
-    challengeLocations.forEach(loc => {
-      const dist = Math.sqrt(Math.pow(playerX - loc.x, 2) + Math.pow(playerY - loc.y, 2))
-      if (dist < 8) {
-        foundChallenge = loc
-      }
-    })
+    // Find nearest challenge
+    let nearestChallenge: ChallengeLoc | null = null
+    let minChallengeDist = Infinity
 
-    setNearChallenge(foundChallenge)
-    setShowEnterPrompt(!!foundChallenge)
-  }, [playerX, playerY])
+    for (const loc of challengeLocations) {
+      const dist = Math.sqrt(Math.pow(playerX - loc.x, 2) + Math.pow(playerY - loc.y, 2))
+      if (dist < 8 && dist < minChallengeDist) {
+        minChallengeDist = dist
+        nearestChallenge = loc
+      }
+    }
+
+    setNearChallenge(nearestChallenge)
+    setShowEnterPrompt(!!nearestChallenge)
+  }, [playerX, playerY, activeNPC, npcs, challengeLocations])
 
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
     const touch = e.touches[0]
