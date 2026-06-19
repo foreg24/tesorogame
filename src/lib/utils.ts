@@ -18,6 +18,7 @@ export function getInitialGameState(): GameState {
     playerName: '',
     startTime: null,
     soundEnabled: true,
+    playerPosition: { x: 15, y: 65, direction: 'right' },
   }
 }
 
