@@ -19,6 +19,9 @@ interface ChallengeConfig {
   successEmoji: string
   successMessage: string
   color: string
+  type?: 'default' | 'colors' | 'math' | 'code'
+  colorSequence?: string[]  // For color challenge
+  hiddenIndex?: number      // Which color is hidden
 }
 
 interface ChallengeScreenProps {
@@ -81,7 +84,6 @@ export function ChallengeScreen({
     }
   }
 
-  // Auto-close celebration after 10 seconds
   useEffect(() => {
     if (showCelebration && autoCloseTimer > 0) {
       const timer = setInterval(() => {
@@ -100,6 +102,50 @@ export function ChallengeScreen({
   const handleCloseCelebration = () => {
     setShowCelebration(false)
     onComplete()
+  }
+
+  // Color challenge component
+  const renderColorChallenge = () => {
+    if (!config.colorSequence || config.hiddenIndex === undefined) return null
+
+    const colors = config.colorSequence
+    const hiddenIdx = config.hiddenIndex
+
+    return (
+      <div className="flex flex-wrap justify-center gap-2 py-4 bg-white rounded-xl border-2 border-ocean-300 px-4">
+        {colors.map((color, i) => (
+          <motion.div
+            key={i}
+            className={`w-10 h-10 md:w-12 md:h-12 rounded-xl shadow-md border-2 border-white ${
+              i === hiddenIdx ? 'border-dashed border-treasure-400 bg-gray-100' : ''
+            }`}
+            style={{ backgroundColor: i === hiddenIdx ? undefined : color }}
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ delay: i * 0.1 }}
+          >
+            {i === hiddenIdx && (
+              <span className="flex items-center justify-center h-full text-xl font-bold text-treasure-500">?</span>
+            )}
+          </motion.div>
+        ))}
+      </div>
+    )
+  }
+
+  // Math challenge (sums without results)
+  const renderMathChallenge = () => {
+    if (!config.options) return null
+
+    return (
+      <div className="flex flex-col gap-3 py-4">
+        {config.options.map((opt, i) => (
+          <div key={i} className="text-center py-3 bg-white rounded-lg border-2 border-ocean-200 font-bold text-xl md:text-2xl text-wood-700">
+            {opt}
+          </div>
+        ))}
+      </div>
+    )
   }
 
   return (
@@ -188,26 +234,16 @@ export function ChallengeScreen({
           >
             <div className="flex items-start gap-3">
               <Lightbulb className="w-6 h-6 text-treasure-500 mt-1 flex-shrink-0" />
-              <div>
+              <div className="w-full">
                 <p className="font-bold text-wood-800 mb-2">{t(config.questionKey)}</p>
-                {config.id === 1 && (
-                  <p className="text-2xl md:text-3xl font-bold text-ocean-700 text-center py-4 bg-white rounded-xl border-2 border-ocean-300">
-                    10 - 20 - 30 - <span className="text-treasure-500">___</span> - 50
-                  </p>
-                )}
+
+                {/* Render different challenge types */}
+                {config.type === 'colors' && renderColorChallenge()}
+                {config.type === 'math' && renderMathChallenge()}
                 {config.id === 2 && (
                   <p className="text-lg text-ocean-700 text-center py-4 bg-white rounded-xl border-2 border-ocean-300">
                     {gameState.language === 'es' ? 'El tesoro está 5 pasos al norte y 3 al este.' : 'The treasure is 5 steps north and 3 east.'}
                   </p>
-                )}
-                {config.id === 3 && (
-                  <div className="flex flex-col gap-2 py-2">
-                    {config.options.map((opt, i) => (
-                      <div key={i} className="text-center py-2 bg-white rounded-lg border border-ocean-200 font-bold text-wood-700">
-                        {opt}
-                      </div>
-                    ))}
-                  </div>
                 )}
                 {config.id === 4 && (
                   <p className="text-lg text-ocean-700 text-center py-4 bg-white rounded-xl border-2 border-ocean-300">
@@ -220,6 +256,7 @@ export function ChallengeScreen({
             </div>
           </motion.div>
 
+          {/* Options */}
           <div className="flex flex-col gap-3 mb-6">
             {config.options.map((option, index) => {
               const isSelected = selectedOption === option
@@ -249,7 +286,15 @@ export function ChallengeScreen({
                   transition={{ delay: 0.7 + index * 0.1 }}
                 >
                   <span className="flex items-center justify-between">
-                    <span>{String.fromCharCode(65 + index)}. {option}</span>
+                    <span className="flex items-center gap-3">
+                      {config.type === 'colors' && (
+                        <span 
+                          className="w-8 h-8 rounded-lg border-2 border-wood-300 shadow-sm inline-block"
+                          style={{ backgroundColor: option }}
+                        />
+                      )}
+                      <span>{config.type === 'colors' ? '' : String.fromCharCode(65 + index) + '. '}{option}</span>
+                    </span>
                     {feedback === 'correct' && isCorrect && (
                       <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }}>
                         <Check className="w-6 h-6 text-green-600" />
@@ -306,7 +351,7 @@ export function ChallengeScreen({
           </AnimatePresence>
         </motion.div>
 
-        {/* SUCCESS CELEBRATION - Auto-close 10s + manual close */}
+        {/* SUCCESS CELEBRATION */}
         <AnimatePresence>
           {showCelebration && (
             <motion.div
@@ -323,7 +368,6 @@ export function ChallengeScreen({
                 transition={{ type: "spring", stiffness: 200, damping: 15 }}
                 onClick={(e) => e.stopPropagation()}
               >
-                {/* Close button */}
                 <button
                   onClick={handleCloseCelebration}
                   className="absolute top-3 right-3 w-8 h-8 rounded-full bg-wood-100 hover:bg-wood-200 flex items-center justify-center text-wood-600 text-sm font-bold transition-colors"
@@ -348,7 +392,6 @@ export function ChallengeScreen({
                   🔑
                 </motion.div>
 
-                {/* Timer indicator */}
                 <div className="mt-4">
                   <div className="w-full bg-gray-200 rounded-full h-2 mb-2">
                     <motion.div
@@ -359,9 +402,7 @@ export function ChallengeScreen({
                     />
                   </div>
                   <p className="text-xs text-wood-400">
-                    {gameState.language === 'es' 
-                      ? `Cerrando en ${autoCloseTimer}s (o toca ✕)` 
-                      : `Closing in ${autoCloseTimer}s (or tap ✕)`}
+                    {gameState.language === 'es' ? `Cerrando en ${autoCloseTimer}s (o toca ✕)` : `Closing in ${autoCloseTimer}s (or tap ✕)`}
                   </p>
                 </div>
               </motion.div>

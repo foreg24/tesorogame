@@ -24,14 +24,17 @@ const challengeConfigs = [
     titleKey: 'challenge1Title',
     introKey: 'challenge1Intro',
     questionKey: 'challenge1Question',
-    options: ['35', '40', '45'],
-    correctAnswer: '40',
+    options: ['#FF0000', '#00FF00', '#0000FF'],  // Red, Green, Blue
+    correctAnswer: '#00FF00',  // Green follows the pattern
     skillKey: 'challenge1Skill',
     competenceKey: 'challenge1Competence',
-    emoji: '🌉',
-    successEmoji: '🌉✨',
-    successMessage: '¡El puente se ha reparado!',
+    emoji: '🎨',
+    successEmoji: '🎨✨',
+    successMessage: '¡Has descubierto el patrón de colores!',
     color: 'border-ocean-400',
+    type: 'colors' as const,
+    colorSequence: ['#FF0000', '#00FF00', '#0000FF', '#FF0000', '#00FF00', '#0000FF', '#FF0000', '#00FF00', '#0000FF', '#FF0000'],
+    hiddenIndex: 9,  // The 10th color (index 9) is hidden
   },
   {
     id: 2,
@@ -52,14 +55,15 @@ const challengeConfigs = [
     titleKey: 'challenge3Title',
     introKey: 'challenge3Intro',
     questionKey: 'challenge3Question',
-    options: ['25 + 15 = 40', '18 + 30 = 48', '20 + 20 = 40'],
-    correctAnswer: '18 + 30 = 48',
+    options: ['25 + 15', '18 + 30', '20 + 20'],  // No results shown
+    correctAnswer: '18 + 30',
     skillKey: 'challenge3Skill',
     competenceKey: 'challenge3Competence',
     emoji: '💰',
     successEmoji: '💰✨',
     successMessage: '¡El cofre se ha abierto!',
     color: 'border-treasure-400',
+    type: 'math' as const,
   },
   {
     id: 4,
@@ -182,7 +186,6 @@ export default function Home() {
 
   return (
     <main className="min-h-screen relative overflow-hidden">
-      {/* Background music - plays on all screens */}
       <MusicPlayer enabled={gameState.soundEnabled} />
 
       <AnimatePresence mode="wait">

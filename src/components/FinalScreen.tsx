@@ -122,7 +122,7 @@ export function FinalScreen({ gameState, onComplete, onBack, onCorrect, onWrong 
             {t('finalIntro')}
           </motion.p>
 
-          {/* Code hint */}
+          {/* Code hint - Now with "?" instead of numbers */}
           <motion.div
             className="bg-wood-100 rounded-2xl p-4 mb-6 border-2 border-wood-300"
             initial={{ opacity: 0, y: 10 }}
@@ -142,10 +142,15 @@ export function FinalScreen({ gameState, onComplete, onBack, onCorrect, onWrong 
                   animate={gameState.keys.includes(i) ? { scale: [1, 1.1, 1] } : {}}
                   transition={{ duration: 2, repeat: Infinity, delay: i * 0.3 }}
                 >
-                  {gameState.keys.includes(i) ? correctCode[i - 1] : '?'}
+                  {gameState.keys.includes(i) ? '?' : '?'}
                 </motion.div>
               ))}
             </div>
+            <p className="text-center text-xs text-wood-500 mt-2">
+              {gameState.language === 'es' 
+                ? 'Descubre el código con las llaves que encontraste' 
+                : 'Discover the code with the keys you found'}
+            </p>
           </motion.div>
 
           {/* Code display */}
@@ -170,7 +175,7 @@ export function FinalScreen({ gameState, onComplete, onBack, onCorrect, onWrong 
                 animate={{ scale: 1 }}
                 transition={{ delay: 0.1 * i, type: "spring" }}
               >
-                {code[i] || ''}
+                {code[i] || '?'}
               </motion.div>
             ))}
           </motion.div>
@@ -242,7 +247,6 @@ export function FinalScreen({ gameState, onComplete, onBack, onCorrect, onWrong 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
             >
-              {/* Confetti */}
               {[...Array(50)].map((_, i) => (
                 <motion.div
                   key={i}
