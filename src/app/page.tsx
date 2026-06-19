@@ -25,7 +25,7 @@ const challengeConfigs = [
     introKey: 'challenge1Intro',
     questionKey: 'challenge1Question',
     options: ['#FF0000', '#00FF00', '#0000FF'],  // Red, Green, Blue
-    correctAnswer: '#00FF00',  // Green follows the pattern
+    correctAnswer: '#FF0000',  // Red follows the pattern
     skillKey: 'challenge1Skill',
     competenceKey: 'challenge1Competence',
     emoji: '🎨',
