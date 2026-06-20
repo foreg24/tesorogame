@@ -241,10 +241,15 @@ export function ChallengeScreen({
                 {config.type === 'colors' && renderColorChallenge()}
                 {config.type === 'math' && renderMathChallenge()}
                 {config.id === 2 && (
-                  <p className="text-lg text-ocean-700 text-center py-4 bg-white rounded-xl border-2 border-ocean-300">
-                    {gameState.language === 'es' ? 'El tesoro está 5 pasos al norte y 3 al este.' : 'The treasure is 5 steps north and 3 east.'}
-                  </p>
-                )}
+  <div className="flex justify-center py-4 bg-white rounded-xl border-2 border-ocean-300">
+    <img 
+      src="/assets/mapa-pista.png" 
+      alt="Pista del mapa"
+      className="max-w-full h-auto rounded-lg"
+      style={{ maxHeight: '200px' }}
+    />
+  </div>
+)}
                 {config.id === 4 && (
                   <p className="text-lg text-ocean-700 text-center py-4 bg-white rounded-xl border-2 border-ocean-300">
                     {gameState.language === 'es' 
